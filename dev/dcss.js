@@ -6,14 +6,10 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
+    this.css = {};
     this.dConsole = {}
-    let scope = this,
-        css;
+    let scope = this;
 
-    this.display = () => {
-        this.html();
-        this.consolePanel();
-    }
     this.consolePanel = () => {
         if (typeof console != "undefined") {
             if (typeof console.log != 'undefined') {
@@ -25,25 +21,24 @@ var DCSS = function (domElement) {
                 console.olog(message);
                 this.dConsole.log = document.createElement('div');
                 this.dConsole.message = document.createTextNode(message);
-                this.dConsole.id = '__viewLog__';
+                this.dConsole.log.id = '__viewLog__';
                 this.dConsole.log.append(this.dConsole.message);
                 this.view.append(this.dConsole.log);
-                //                $(view).append('<div class="consoleLog">' + message + '</div>');
             };
             console.error = console.debug = console.info = console.log;
         }
     }
-    this.html = function () {
+    this.init = function () {
         this.view = document.createElement('div');
         document.body.appendChild(this.view);
-        css = this.view.style;
+        this.css.view = this.view.style;
         this.initCss();
     }
     this.initCss = () => {
-        css.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll;';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll;';
     }
     this.updateCss = e => {
-        css.display = 'block';
+        this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
         console.log(this.snapViewer);
@@ -54,18 +49,28 @@ var DCSS = function (domElement) {
                 switchMobile = window.innerWidth < (this.width + this.offsetX) * 2;
 
             if (switchMobile) {
-                css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
-                switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
+                this.css.view.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
+                switchY ? this.css.view.top = this.css.view.top = y - this.offsetY - this.width + 'px' : !switchY ? this.css.view.top = y + this.offsetY + 'px' : 0;
             } else {
-                switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
-                switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
+                switchX ? this.css.view.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? this.css.view.left = x + scope.offsetX + 'px' : 0;
+                switchY ? this.css.view.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? this.css.view.top = y + scope.offsetY + 'px' : 0;
             }
         }
     }
+    this.makeHTML = (tag, text, id) => {
+        let target = document.createElement(tag),
+            message = document.createTextNode(text);
+        target.id = id;
+        target.appendChild(message)
+        document.appendChild(target);
+    }
 
-    this.display();
+    (() => {
+        this.init();
+        this.consolePanel();
+    })();
     this.domElement.addEventListener('mouseout', () => {
-        !this.snapViewer ? css.display = 'none' : 0
+        !this.snapViewer ? this.css.view.display = 'none' : 0
     }, false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
