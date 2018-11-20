@@ -1,16 +1,16 @@
-var DCSS = function (domElement, hidden) {
-    //Constructors
+var DCSS = function (domElement, toggle) {
+    this.toggle = toggle;
+    domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
     this.offsetY = 40;
     this.onElement;
+    this.snapViewer = false;
     this.width = 400;
     this.height = 400;
-    domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
     let scope = this,
         view,
         css;
 
-    //Methods
     this.display = () => {
         this.information();
         this.html();
@@ -40,7 +40,6 @@ var DCSS = function (domElement, hidden) {
                 sX: x,
                 sy: y
             };
-
         if (switchMobile) {
             css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
             switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
@@ -49,7 +48,6 @@ var DCSS = function (domElement, hidden) {
             switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
         }
     }
-    this.hideView = () => {}
 
     //user Function
     this.view = userView => {
@@ -57,18 +55,11 @@ var DCSS = function (domElement, hidden) {
         css = view.style;
     }
 
-    this.snapView = () => {
-        let snapX = css.left,
-            snapY = css.top;
-        css.left = snapX + 'px !important';
-        css.top = snapX + 'px !important';
-    }
-
     this.display();
     this.domElement.addEventListener('mouseout', () => css.display = 'none', false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
-        key == 83 ? this.snapView() : 0;
+        key == 83 ? this.snapViewer = true : 0;
     };
     this.domElement.addEventListener('scroll', scope.updateCss, false);
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
