@@ -1,7 +1,7 @@
 //author = @harryPunia
 
 var DCSS = function (domElement) {
-    domElement == (undefined || null || window || document) ? this.domElement = document : this.domElement = document.getElementById(domElement);
+    domElement == undefined ? this.domElement = document : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
     this.offsetY = 40;
     this.snapViewer = false;
@@ -14,7 +14,6 @@ var DCSS = function (domElement) {
     this.css = {};
     this.dConsole;
     let scope = this;
-    console.log(this.domElement);
 
     this.init = function () {
         this.view = document.createElement('div');
@@ -83,15 +82,17 @@ var DCSS = function (domElement) {
         this.hoverViewer = false;
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
-    this.view.addEventListener('mousemove', scope.snapView, false);
-    window.onmousedown = () => this.snapping = true;
-    window.onmouseup = () => this.snapping = false;
+    this.domElement.addEventListener('mousemove', scope.snapView, false);
+    window.onmousedown = () => {
+        this.snapping = true;
+    }
+    window.onmouseup = () => {
+        this.snapping = false;
+    }
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
-        if (this.snapViewer) {
-            if (key == 83) {
-                (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
-            }
+        if (this.snapViewer && key == 83) {
+            (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
         } else if (this.hoverViewer) {
             key == 83 ? this.snapViewer = true : 0;
         }
