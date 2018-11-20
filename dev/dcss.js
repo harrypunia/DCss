@@ -1,4 +1,4 @@
-var DCSS = function (domElement) {
+var DCSS = function (domElement, hidden) {
     //Constructors
     this.offsetX = 50;
     this.offsetY = 40;
@@ -27,11 +27,10 @@ var DCSS = function (domElement) {
         this.initCss();
     }
     this.initCss = () => {
-        css.top = '0px';
-        css.left = '0px';
-        css.cssText = 'width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
+        css.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
     }
     this.updateCss = e => {
+        css.display = 'block';
         let x = e.clientX + window.pageXOffset,
             y = e.clientY + window.pageYOffset,
             switchX = e.clientX > (window.innerWidth / 2),
@@ -49,13 +48,14 @@ var DCSS = function (domElement) {
             switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
             switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
         }
-        console.log(switchY);
     }
-    this.hideView = () => {
-        css.top = '-100vh';
-        css.left = '-100vw';
+    this.hideView = () => {}
+
+    //user Function
+    this.view = userView => {
+        view = document.getElementById(userView);
+        css = view.style;
     }
-    this.showView = () => {}
 
     this.snapView = () => {
         let snapX = css.left,
@@ -64,20 +64,8 @@ var DCSS = function (domElement) {
         css.top = snapX + 'px !important';
     }
 
-    this.onScroll = e => {
-
-    }
-
-    //user Function
-    this.view = userView => {
-        //Work on this
-        view = document.getElementById(userView);
-        css = view.style;
-    }
-
     this.display();
-    this.domElement.addEventListener('mouseout', scope.hideView, false);
-    this.domElement.addEventListener('mouseover', scope.showView, false);
+    this.domElement.addEventListener('mouseout', () => css.display = 'none', false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
         key == 83 ? this.snapView() : 0;
