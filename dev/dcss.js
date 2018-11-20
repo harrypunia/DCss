@@ -76,13 +76,14 @@ var DCSS = function (domElement) {
 
     //init
     this.init();
+    console.log('hey');
     //Additional
     this.domElement.addEventListener('mouseout', () => {
         !this.snapViewer ? this.css.view.display = 'none' : 0
         this.hoverViewer = false;
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
-    this.domElement.addEventListener('mousemove', scope.snapView, false);
+    window.addEventListener('mousemove', scope.snapView, false);
     window.onmousedown = () => {
         this.snapping = true;
     }
