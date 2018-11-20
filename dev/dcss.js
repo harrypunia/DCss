@@ -1,12 +1,9 @@
 var DCSS = function (domElement) {
     //Constructors
-    if (domElement == undefined) {
-        this.domElement = document;
-    } else {
-        this.domElement = document.getElementById(domElement);
-    }
     this.offsetX = 50;
     this.offsetY = 20;
+    this.onElement;
+    domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
     let scope = this,
         view,
         css;
@@ -81,9 +78,9 @@ var DCSS = function (domElement) {
     this.display();
     this.domElement.addEventListener('mouseout', scope.hideView, false);
     this.domElement.addEventListener('mouseover', scope.showView, false);
-    this.domElement.addEventListener('keydown', e => {
-        let key = e.code || e.which;
-        console.log(e);
-    })
+    window.onkeydown = e => {
+        let key = e.code ? e.which : e.which;
+        console.log(key);
+    };
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
 }
