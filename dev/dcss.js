@@ -34,8 +34,8 @@ var DCSS = function (domElement) {
     this.updateCss = e => {
         let x = e.clientX + window.pageXOffset,
             y = e.clientY + window.pageYOffset,
-            switchX = x > (window.innerWidth / 2),
-            switchY = y > (window.innerHeight / 2),
+            switchX = e.clientX > (window.innerWidth / 2),
+            switchY = e.clientY > (window.innerHeight / 2),
             switchMobile = window.innerWidth < (this.width + this.offsetX) * 2,
             scrollingSnap = {
                 sX: x,
@@ -46,9 +46,10 @@ var DCSS = function (domElement) {
             css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
             switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
         } else {
-            switchX ? css.left = (x - scope.offsetX - parseInt(css.width)) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
-            switchY ? css.top = (y - scope.offsetY - parseInt(css.height)) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
+            switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
+            switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
         }
+        console.log(switchY);
     }
     this.hideView = () => {
         css.top = '-100vh';
