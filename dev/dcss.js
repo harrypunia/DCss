@@ -5,8 +5,9 @@ var DCSS = function (domElement) {
     this.snapViewer = false;
     this.width = 400;
     this.height = 400;
+    this.view;
+    this.dConsole = {}
     let scope = this,
-        view,
         css;
 
     this.display = () => {
@@ -18,19 +19,24 @@ var DCSS = function (domElement) {
             if (typeof console.log != 'undefined') {
                 console.olog = console.log;
             } else {
-                console.olog = function () {};
+                console.olog = () => {};
             }
-            console.log = function (message) {
+            console.log = message => {
                 console.olog(message);
-                $(view).append('<div class="consoleLog">' + message + '</div>');
+                this.dConsole.log = document.createElement('div');
+                this.dConsole.message = document.createTextNode(message);
+                this.dConsole.id = '__viewLog__';
+                this.dConsole.log.append(this.dConsole.message);
+                this.view.append(this.dConsole.log);
+                //                $(view).append('<div class="consoleLog">' + message + '</div>');
             };
-            console.error = console.debug = console.info = console.log
+            console.error = console.debug = console.info = console.log;
         }
     }
     this.html = function () {
-        view = document.createElement('div');
-        document.body.appendChild(view);
-        css = view.style;
+        this.view = document.createElement('div');
+        document.body.appendChild(this.view);
+        css = this.view.style;
         this.initCss();
     }
     this.initCss = () => {
@@ -54,13 +60,7 @@ var DCSS = function (domElement) {
                 switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
                 switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
             }
-        } else {}
-    }
-
-    //user Function
-    this.view = userView => {
-        view = document.getElementById(userView);
-        css = view.style;
+        }
     }
 
     this.display();
