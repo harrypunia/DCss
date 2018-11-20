@@ -4,7 +4,7 @@ var DCSS = function (domElement) {
     this.offsetY = 40;
     this.onElement;
     this.width = 400;
-    this.height = 300;
+    this.height = 400;
     domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
     let scope = this,
         view,
@@ -29,7 +29,7 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         css.top = '0px';
         css.left = '0px';
-        css.cssText = 'width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(239, 239, 239); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
+        css.cssText = 'width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
     }
     this.updateCss = e => {
         let x = e.clientX + window.pageXOffset,
@@ -57,7 +57,7 @@ var DCSS = function (domElement) {
     }
     this.showView = () => {}
 
-    this.holdView = () => {
+    this.snapView = () => {
         let snapX = css.left,
             snapY = css.top;
         css.left = snapX + 'px !important';
@@ -80,6 +80,7 @@ var DCSS = function (domElement) {
     this.domElement.addEventListener('mouseover', scope.showView, false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
+        key == 83 ? this.snapView() : 0;
     };
     this.domElement.addEventListener('scroll', scope.updateCss, false);
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
