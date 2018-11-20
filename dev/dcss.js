@@ -1,8 +1,10 @@
 var DCSS = function (domElement) {
     //Constructors
     this.offsetX = 50;
-    this.offsetY = 20;
+    this.offsetY = 40;
     this.onElement;
+    this.width = 400;
+    this.height = 300;
     domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
     let scope = this,
         view,
@@ -27,26 +29,25 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         css.top = '0px';
         css.left = '0px';
-        css.cssText = 'width: 500px; height: 700px; background: rgb(239, 239, 239); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
+        css.cssText = 'width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(239, 239, 239); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
     }
     this.updateCss = e => {
-        let x = e.clientX,
-            y = e.clientY,
+        let x = e.clientX + window.pageXOffset,
+            y = e.clientY + window.pageYOffset,
             switchX = x > (window.innerWidth / 2),
             switchY = y > (window.innerHeight / 2),
+            switchMobile = window.innerWidth < (this.width + this.offsetX) * 2,
             scrollingSnap = {
                 sX: x,
                 sy: y
             };
-        if (switchX) {
-            css.left = (x - scope.offsetX + window.pageXOffset - parseInt(css.width)) + 'px';
-        } else if (!switchX) {
-            css.left = x + scope.offsetX + window.pageXOffset + 'px';
-        }
-        if (switchY) {
-            css.top = (y - scope.offsetY + window.pageYOffset - parseInt(css.height)) + 'px';
-        } else if (!switchY) {
-            css.top = y + scope.offsetY + window.pageYOffset + 'px';
+
+        if (switchMobile) {
+            css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
+            switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
+        } else {
+            switchX ? css.left = (x - scope.offsetX - parseInt(css.width)) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
+            switchY ? css.top = (y - scope.offsetY - parseInt(css.height)) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
         }
     }
     this.hideView = () => {
@@ -62,6 +63,10 @@ var DCSS = function (domElement) {
         css.top = snapX + 'px !important';
     }
 
+    this.onScroll = e => {
+
+    }
+
     //user Function
     this.view = userView => {
         //Work on this
@@ -74,7 +79,6 @@ var DCSS = function (domElement) {
     this.domElement.addEventListener('mouseover', scope.showView, false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
-        console.log(key);
     };
     this.domElement.addEventListener('scroll', scope.updateCss, false);
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
