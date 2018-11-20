@@ -8,11 +8,9 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
+    this.snapping = false;
     this.html = {};
-    this.css = {
-        view: null,
-        dConsole: null,
-    };
+    this.css = {};
     this.dConsole = {}
     let scope = this;
 
@@ -20,18 +18,17 @@ var DCSS = function (domElement) {
         this.view = document.createElement('div');
         document.body.appendChild(this.view);
         this.css.view = this.view.style;
+        //---------------------------------
+        this.consolePanel();
         this.initCss();
     }
     this.initCss = () => {
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll;';
-        this.css.dConsole.cssText = 'background: red'
     }
     this.updateCss = e => {
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
-        console.log(this.snapViewer);
-        console.log('a');
 
         if (!this.snapViewer) {
             let switchX = e.clientX > (window.innerWidth / 2),
@@ -57,27 +54,32 @@ var DCSS = function (domElement) {
             }
             console.log = message => {
                 console.olog(message);
-                if (prevMessage == message) {} else {
-                    this.dConsole.log = document.createElement('div');
-                    this.dConsole.message = document.createTextNode(message);
-                    this.dConsole.log.id = '__viewLog__';
-                    this.css.dConsole = scope.dConsole.log.style;
-                    this.dConsole.log.append(this.dConsole.message);
-                    this.view.append(this.dConsole.log);
+                if (prevMessage == message) {
+
+                } else {
+                    this.dConsole.message = document.createElement('pre');
+                    this.dConsole.text = document.createTextNode(message);
+                    this.dConsole.message.classList.add('__viewLog__');
+                    this.css.dConsole = scope.dConsole.message.style;
+                    this.dConsole.message.append(this.dConsole.text);
+                    this.view.append(this.dConsole.message);
                     this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
                 }
                 prevMessage = message;
             };
-            console.log(this.dConsole.log);
             console.error = console.debug = console.info = console.log;
+        }
+    }
+    this.snapViewer = e => {
+        if (this.snapping) {
+            this.css.view.left = e.clientX - (this.width / 2) + 'px';
+            this.css.view.top = e.clientY - 10 + 'px';
+            console.log('working');
         }
     }
 
     //Additional
-    (() => {
-        this.init();
-        this.consolePanel();
-    })();
+    this.init();
     this.domElement.addEventListener('mouseout', () => {
         !this.snapViewer ? this.css.view.display = 'none' : 0
     }, false);
@@ -86,4 +88,7 @@ var DCSS = function (domElement) {
         (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
     };
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
+    this.view.addEventListener('mousemove', scope.snapViewer, false);
+    window.onmousedown = () => this.snapping = true;
+    window.onmouseup = () => this.snapping = false;
 }
