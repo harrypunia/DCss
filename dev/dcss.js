@@ -1,6 +1,5 @@
-var DCSS = function (domElement, toggle) {
-    this.toggle = toggle;
-    domElement == undefined ? this.domElement = document : this.domElement = document.getElementById(domElement);
+var DCSS = function (domElement) {
+    domElement == undefined || null || window || document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
     this.offsetY = 40;
     this.onElement;
@@ -27,26 +26,30 @@ var DCSS = function (domElement, toggle) {
         this.initCss();
     }
     this.initCss = () => {
-        css.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: absolute; z-index: 99999999;';
+        css.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999;';
     }
     this.updateCss = e => {
         css.display = 'block';
-        let x = e.clientX + window.pageXOffset,
-            y = e.clientY + window.pageYOffset,
-            switchX = e.clientX > (window.innerWidth / 2),
-            switchY = e.clientY > (window.innerHeight / 2),
-            switchMobile = window.innerWidth < (this.width + this.offsetX) * 2,
-            scrollingSnap = {
-                sX: x,
-                sy: y
-            };
-        if (switchMobile) {
-            css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
-            switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
-        } else {
-            switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
-            switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
-        }
+        let x = e.clientX,
+            y = e.clientY;
+        console.log(this.snapViewer);
+
+        if (!this.snapViewer) {
+            let switchX = e.clientX > (window.innerWidth / 2),
+                switchY = e.clientY > (window.innerHeight / 2),
+                switchMobile = window.innerWidth < (this.width + this.offsetX) * 2,
+                scrollingSnap = {
+                    sX: x,
+                    sy: y
+                };
+            if (switchMobile) {
+                css.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
+                switchY ? css.top = css.top = y - this.offsetY - this.width + 'px' : !switchY ? css.top = y + this.offsetY + 'px' : 0;
+            } else {
+                switchX ? css.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? css.left = x + scope.offsetX + 'px' : 0;
+                switchY ? css.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? css.top = y + scope.offsetY + 'px' : 0;
+            }
+        } else {}
     }
 
     //user Function
@@ -56,11 +59,12 @@ var DCSS = function (domElement, toggle) {
     }
 
     this.display();
-    this.domElement.addEventListener('mouseout', () => css.display = 'none', false);
+    this.domElement.addEventListener('mouseout', () => {
+        !this.snapViewer ? css.display = 'none' : 0
+    }, false);
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
-        key == 83 ? this.snapViewer = true : 0;
+        (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
     };
-    this.domElement.addEventListener('scroll', scope.updateCss, false);
     this.domElement.addEventListener('mousemove', scope.updateCss, false);
 }
