@@ -1,3 +1,5 @@
+//author = @harryPunia
+
 var DCSS = function (domElement) {
     domElement == undefined || null || window || document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
@@ -6,6 +8,7 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
+    this.html = {};
     this.css = {};
     this.dConsole = {}
     let scope = this;
@@ -29,6 +32,7 @@ var DCSS = function (domElement) {
         }
     }
     this.init = function () {
+        //        this.makeHTML(this.view, 'div', null, null, 'view');
         this.view = document.createElement('div');
         document.body.appendChild(this.view);
         this.css.view = this.view.style;
@@ -57,12 +61,11 @@ var DCSS = function (domElement) {
             }
         }
     }
-    this.makeHTML = (tag, text, id) => {
-        let target = document.createElement(tag),
-            message = document.createTextNode(text);
-        target.id = id;
-        target.appendChild(message)
-        document.appendChild(target);
+    this.makeHTML = (target, tag, text, id) => {
+        target = document.createElement(tag);
+        text != null || undefined ? target.appendChild(document.createTextNode(text)) : 0;
+        id != null || undefined ? target.id = id : 0;
+        document.body.appendChild(target);
     }
 
     (() => {
