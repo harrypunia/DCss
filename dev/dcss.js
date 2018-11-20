@@ -5,7 +5,7 @@ var DCSS = function (domElement) {
     this.offsetX = 50;
     this.offsetY = 40;
     this.snapViewer = false;
-    this.hovering = false;
+    this.hoverViewer = false;
     this.snapping = false;
     this.width = 400;
     this.height = 400;
@@ -28,7 +28,7 @@ var DCSS = function (domElement) {
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px';
     }
     this.followView = e => {
-        this.hovering = true;
+        this.hoverViewer = true;
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
@@ -80,16 +80,20 @@ var DCSS = function (domElement) {
     //Additional
     this.domElement.addEventListener('mouseout', () => {
         !this.snapViewer ? this.css.view.display = 'none' : 0
-        this.hovering = false;
+        this.hoverViewer = false;
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
     this.view.addEventListener('mousemove', scope.snapView, false);
     window.onmousedown = () => this.snapping = true;
     window.onmouseup = () => this.snapping = false;
     window.onkeydown = e => {
-        if (this.hovering) {
-            let key = e.keyCode ? e.which : e.which;
-            (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
+        let key = e.keyCode ? e.which : e.which;
+        if (this.snapViewer) {
+            if (key == 83) {
+                (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
+            }
+        } else if (this.hoverViewer) {
+            key == 83 ? this.snapViewer = true : 0;
         }
     }
 }
