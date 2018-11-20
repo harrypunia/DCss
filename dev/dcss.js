@@ -16,6 +16,7 @@ var DCSS = function (domElement) {
     let scope = this;
 
     this.consolePanel = () => {
+        let prevMessage;
         if (typeof console != "undefined") {
             if (typeof console.log != 'undefined') {
                 console.olog = console.log;
@@ -24,12 +25,16 @@ var DCSS = function (domElement) {
             }
             console.log = message => {
                 console.olog(message);
-                this.dConsole.log = document.createElement('div');
-                this.dConsole.message = document.createTextNode(message);
-                this.dConsole.log.id = '__viewLog__';
-                this.dConsole.log.append(this.dConsole.message);
-                this.view.append(this.dConsole.log);
+                if (prevMessage == message) {} else {
+                    this.dConsole.log = document.createElement('div');
+                    this.dConsole.message = document.createTextNode(message);
+                    this.dConsole.log.id = '__viewLog__';
+                    this.dConsole.log.append(this.dConsole.message);
+                    this.view.append(this.dConsole.log);
+                }
+                prevMessage = message;
             };
+            console.log(this.dConsole.log);
             console.error = console.debug = console.info = console.log;
         }
     }
