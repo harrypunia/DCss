@@ -9,7 +9,9 @@ var DCSS = function (domElement) {
     this.height = 400;
     this.view;
     this.html = {};
-    this.css = {};
+    this.css = {
+        view: null,
+    };
     this.dConsole = {}
     let scope = this;
 
@@ -32,7 +34,6 @@ var DCSS = function (domElement) {
         }
     }
     this.init = function () {
-        //        this.makeHTML(this.view, 'div', null, null, 'view');
         this.view = document.createElement('div');
         document.body.appendChild(this.view);
         this.css.view = this.view.style;
@@ -60,12 +61,6 @@ var DCSS = function (domElement) {
                 switchY ? this.css.view.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? this.css.view.top = y + scope.offsetY + 'px' : 0;
             }
         }
-    }
-    this.makeHTML = (target, tag, text, id) => {
-        target = document.createElement(tag);
-        text != null || undefined ? target.appendChild(document.createTextNode(text)) : 0;
-        id != null || undefined ? target.id = id : 0;
-        document.body.appendChild(target);
     }
 
     (() => {
