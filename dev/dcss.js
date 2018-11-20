@@ -1,18 +1,20 @@
 //author = @harryPunia
 
 var DCSS = function (domElement) {
-    domElement == undefined || null || window || document ? this.domElement = document : this.domElement = document.getElementById(domElement);
+    domElement == (undefined || null || window || document) ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
     this.offsetY = 40;
     this.snapViewer = false;
+    this.hovering = false;
+    this.snapping = false;
     this.width = 400;
     this.height = 400;
     this.view;
-    this.snapping = false;
     this.html = {};
     this.css = {};
-    this.dConsole = {}
+    this.dConsole;
     let scope = this;
+    console.log(this.domElement);
 
     this.init = function () {
         this.view = document.createElement('div');
@@ -23,18 +25,17 @@ var DCSS = function (domElement) {
         this.initCss();
     }
     this.initCss = () => {
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll;';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px';
     }
-    this.updateCss = e => {
+    this.followView = e => {
+        this.hovering = true;
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
-
-        if (!this.snapViewer) {
+        if (this.snapViewer == false) {
             let switchX = e.clientX > (window.innerWidth / 2),
                 switchY = e.clientY > (window.innerHeight / 2),
                 switchMobile = window.innerWidth < (this.width + this.offsetX) * 2;
-
             if (switchMobile) {
                 this.css.view.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
                 switchY ? this.css.view.top = this.css.view.top = y - this.offsetY - this.width + 'px' : !switchY ? this.css.view.top = y + this.offsetY + 'px' : 0;
@@ -54,15 +55,12 @@ var DCSS = function (domElement) {
             }
             console.log = message => {
                 console.olog(message);
-                if (prevMessage == message) {
-
-                } else {
-                    this.dConsole.message = document.createElement('pre');
-                    this.dConsole.text = document.createTextNode(message);
-                    this.dConsole.message.classList.add('__viewLog__');
-                    this.css.dConsole = scope.dConsole.message.style;
-                    this.dConsole.message.append(this.dConsole.text);
-                    this.view.append(this.dConsole.message);
+                if (prevMessage == message) {} else {
+                    this.dConsole = document.createElement('pre');
+                    let dConsoleLog = document.createTextNode(message);
+                    this.dConsole.classList.add('__viewLog__');
+                    this.dConsole.append(dConsoleLog);
+                    this.view.append(this.dConsole);
                     this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
                 }
                 prevMessage = message;
@@ -70,25 +68,28 @@ var DCSS = function (domElement) {
             console.error = console.debug = console.info = console.log;
         }
     }
-    this.snapViewer = e => {
-        if (this.snapping) {
+    this.snapView = e => {
+        if (this.snapping && this.snapViewer) {
             this.css.view.left = e.clientX - (this.width / 2) + 'px';
             this.css.view.top = e.clientY - 10 + 'px';
-            console.log('working');
         }
     }
 
-    //Additional
+    //init
     this.init();
+    //Additional
     this.domElement.addEventListener('mouseout', () => {
         !this.snapViewer ? this.css.view.display = 'none' : 0
+        this.hovering = false;
     }, false);
-    window.onkeydown = e => {
-        let key = e.keyCode ? e.which : e.which;
-        (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
-    };
-    this.domElement.addEventListener('mousemove', scope.updateCss, false);
-    this.view.addEventListener('mousemove', scope.snapViewer, false);
+    this.domElement.addEventListener('mousemove', scope.followView, false);
+    this.view.addEventListener('mousemove', scope.snapView, false);
     window.onmousedown = () => this.snapping = true;
     window.onmouseup = () => this.snapping = false;
+    window.onkeydown = e => {
+        if (this.hovering) {
+            let key = e.keyCode ? e.which : e.which;
+            (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
+        }
+    }
 }
