@@ -1,5 +1,4 @@
 //author = @harryPunia
-
 var DCSS = function (domElement) {
     domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 50;
