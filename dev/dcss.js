@@ -1,11 +1,12 @@
 //author = @harryPunia
 var DCSS = function (domElement) {
     domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
-    this.offsetX = 50;
-    this.offsetY = 40;
+    this.offsetX = 20;
+    this.offsetY = 20;
     this.snapViewer = false;
     this.hoverViewer = false;
     this.snapping = false;
+    this.minimizeViewer = false;
     this.width = 400;
     this.height = 400;
     this.view;
@@ -24,7 +25,7 @@ var DCSS = function (domElement) {
         this.initCss();
     }
     this.initCss = () => {
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
     }
     this.followView = e => {
         this.hoverViewer = true;
@@ -39,8 +40,18 @@ var DCSS = function (domElement) {
                 this.css.view.left = (window.innerWidth / 2) - (this.width / 2) + 'px';
                 switchY ? this.css.view.top = this.css.view.top = y - this.offsetY - this.width + 'px' : !switchY ? this.css.view.top = y + this.offsetY + 'px' : 0;
             } else {
-                switchX ? this.css.view.left = (x - scope.offsetX - this.width) + 'px' : !switchX ? this.css.view.left = x + scope.offsetX + 'px' : 0;
-                switchY ? this.css.view.top = (y - scope.offsetY - this.height) + 'px' : !switchY ? this.css.view.top = y + scope.offsetY + 'px' : 0;
+                if (switchX) {
+                    this.css.view.left = (x - scope.offsetX - this.width) + 'px';
+                } else if (!switchX) {
+                    this.css.view.left = x + scope.offsetX + 'px';
+                }
+                if (switchY) {
+                    this.css.view.top = (y - scope.offsetY - this.height) + 'px';
+                    switchX ? this.css.view.transformOrigin = '100% 100%' : this.css.view.transformOrigin = '0 100%';
+                } else if (!switchY) {
+                    this.css.view.top = y + scope.offsetY + 'px';
+                    switchX ? this.css.view.transformOrigin = '100% 0' : this.css.view.transformOrigin = '0 0';
+                }
             }
         }
     }
@@ -75,9 +86,19 @@ var DCSS = function (domElement) {
             this.css.view.top = e.clientY - 10 + 'px';
         }
     }
+    this.minimize = () => {
+        if (this.minimizeViewer == true) {
+            this.css.view.transform = 'scale3d(.05, .05, 1)';
+            this.css.view.background = 'red';
+            this.css.view.borderRadius = '50%';
+        } else {
+            this.css.view.transform = 'scale3d(1, 1, 1)';
+            this.css.view.background = 'white';
+            this.css.view.borderRadius = '0px';
+        }
+    }
     //init
     this.init();
-
     (function initConsoleLogDiv() {
         'use strict';
         if (console.log.toDiv) {
@@ -172,7 +193,6 @@ var DCSS = function (domElement) {
             }
             printTable(objArr, keys);
         };
-
         window.addEventListener('error', function (err) {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
@@ -195,6 +215,10 @@ var DCSS = function (domElement) {
             (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
         } else if (this.hoverViewer) {
             key == 83 ? this.snapViewer = true : 0;
+        }
+        if (key == 77) {
+            this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
+            this.minimize();
         }
     }
 }
