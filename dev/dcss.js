@@ -32,7 +32,7 @@ var DCSS = function (domElement) {
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
-        if (this.snapViewer == false) {
+        if (this.snapViewer == false || this.minimizeViewer) {
             let switchX = e.clientX > (window.innerWidth / 2),
                 switchY = e.clientY > (window.innerHeight / 2),
                 switchMobile = window.innerWidth < (this.width + this.offsetX) * 2;
@@ -53,6 +53,8 @@ var DCSS = function (domElement) {
                     switchX ? this.css.view.transformOrigin = '100% 0' : this.css.view.transformOrigin = '0 0';
                 }
             }
+        } else if (this.snapViewer && !this.minimizeViewer) {
+            console.log('snapping');
         }
     }
     this.consolePanel = () => {
@@ -97,7 +99,6 @@ var DCSS = function (domElement) {
             this.css.view.borderRadius = '0px';
         }
     }
-    //init
     this.init();
     (function initConsoleLogDiv() {
         'use strict';
