@@ -12,7 +12,6 @@ var DCSS = function (domElement) {
     this.view;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
-    this.dConsole;
     let scope = this;
     var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
@@ -76,13 +75,16 @@ var DCSS = function (domElement) {
 
         console.log = message => {
             console.olog(message);
-            if (prevMessage == message) {} else {
+            if (prevMessage == message) {
+
+            } else {
                 message.toString();
-                this.dConsole = document.createElement('pre');
-                let dConsoleLog = document.createTextNode(message);
-                this.dConsole.classList.add('__viewLog__');
-                this.dConsole.append(dConsoleLog);
-                this.view.append(this.dConsole);
+                let log = document.createElement('div');
+                let logMessage = document.createTextNode(message);
+                log.classList.add('__viewLog__');
+                log.style.borderBottom = '1px solid #efefef';
+                log.append(logMessage);
+                document.getElementById('dcssView__console').append(log);
                 this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
                 prevMessage = message;
             }
@@ -195,6 +197,10 @@ var DCSS = function (domElement) {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
     }());
+
+    //-----------------------------------------------------------------
+    //-----------------------------------------------------------------
+    //-----------------------------------------------------------------
     this.domElement.addEventListener('mouseout', () => {
         !this.snapViewer ? this.css.view.display = 'none' : 0
         this.hoverViewer = false;
