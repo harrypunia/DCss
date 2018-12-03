@@ -10,22 +10,24 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
-    this.html = {};
+    this.html = '<div id="dcssView__console"></div>';
     this.css = {};
     this.dConsole;
     let scope = this;
-
-    this.init = function () {
-        this.view = document.createElement('div');
-        this.view.id = 'viewer';
-        document.body.appendChild(this.view);
-        this.css.view = this.view.style;
-        //---------------------------------
-        this.consolePanel();
+    this.init = () => {
+        this.initHTML();
         this.initCss();
+        this.initConsole();
     }
     this.initCss = () => {
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+    }
+    this.initHTML = () => {
+        this.view = document.createElement('div');
+        this.view.id = 'dcssView';
+        document.body.appendChild(this.view);
+        this.view.innerHTML = this.html;
+        this.css.view = this.view.style;
     }
     this.followView = e => {
         this.hoverViewer = true;
@@ -57,7 +59,7 @@ var DCSS = function (domElement) {
             console.log('snapping');
         }
     }
-    this.consolePanel = () => {
+    this.initConsole = () => {
         let prevMessage;
         if (typeof console != "undefined") {
             if (typeof console.log != 'undefined') {
@@ -100,7 +102,7 @@ var DCSS = function (domElement) {
         }
     }
     this.init();
-    (function initConsoleLogDiv() {
+    (function mapConsole() {
         'use strict';
         if (console.log.toDiv) {
             return;
@@ -110,10 +112,10 @@ var DCSS = function (domElement) {
             return typeof x === 'string' ? x : JSON.stringify(x);
         }
 
-        var log = console.log.bind(console);
-        var error = console.error.bind(console);
-        var warn = console.warn.bind(console);
-        var table = console.table ? console.table.bind(console) : null;
+        let log = console.log.bind(console),
+            error = console.error.bind(console),
+            warn = console.warn.bind(console),
+            table = console.table ? console.table.bind(console) : null;
 
         var logTo = (function createLogDiv() {
             var legend = document.createElement('div');
@@ -194,7 +196,7 @@ var DCSS = function (domElement) {
             }
             printTable(objArr, keys);
         };
-        window.addEventListener('error', function (err) {
+        window.addEventListener('error', err => {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
     }());
