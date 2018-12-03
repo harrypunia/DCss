@@ -14,15 +14,18 @@ var DCSS = function (domElement) {
     this.css = {};
     this.dConsole;
     let scope = this;
+    var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
         this.initHTML();
         this.initCss();
         this.initConsole();
     }
     this.initCss = () => {
+        'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
     }
     this.initHTML = () => {
+        'use strict'
         this.view = document.createElement('div');
         this.view.id = 'dcssView';
         document.body.appendChild(this.view);
@@ -30,6 +33,7 @@ var DCSS = function (domElement) {
         this.css.view = this.view.style;
     }
     this.followView = e => {
+        'use strict'
         this.hoverViewer = true;
         this.css.view.display = 'block';
         let x = e.clientX,
@@ -60,6 +64,7 @@ var DCSS = function (domElement) {
         }
     }
     this.initConsole = () => {
+        'use strict'
         let prevMessage;
         if (typeof console != "undefined") {
             if (typeof console.log != 'undefined') {
@@ -85,12 +90,14 @@ var DCSS = function (domElement) {
         console.warn = console.error = console.info = console.info = console.log;
     }
     this.snapView = e => {
+        'use strict'
         if (this.snapping && this.snapViewer) {
             this.css.view.left = e.clientX - (this.width / 2) + 'px';
             this.css.view.top = e.clientY - 10 + 'px';
         }
     }
     this.minimize = () => {
+        'use strict'
         if (this.minimizeViewer == true) {
             this.css.view.transform = 'scale3d(.05, .05, 1)';
             this.css.view.background = 'red';
@@ -104,13 +111,6 @@ var DCSS = function (domElement) {
     this.init();
     (function mapConsole() {
         'use strict';
-        if (console.log.toDiv) {
-            return;
-        }
-
-        function toString(x) {
-            return typeof x === 'string' ? x : JSON.stringify(x);
-        }
 
         let log = console.log.bind(console),
             error = console.error.bind(console),
@@ -118,25 +118,20 @@ var DCSS = function (domElement) {
             table = console.table ? console.table.bind(console) : null;
 
         var logTo = (function createLogDiv() {
-            let legend = document.createElement('div');
-            legend.id = "legend";
-            scope.view.appendChild(legend);
             let div = document.createElement('div');
             div.id = 'console-log-text';
-            document.getElementById('dcssView').appendChild(div);
+            scope.view.appendChild(div);
             return div;
         }());
 
         function printToDiv() {
-            var msg = Array.prototype.slice.call(arguments, 0)
+            let msg = Array.prototype.slice.call(arguments, 0)
                 .map(toString)
-                .join(' ');
-            var item = document.createElement('div');
+                .join(' '),
+                item = document.createElement('div');
             item.textContent = msg;
             logTo.appendChild(item);
         }
-
-        console.log.toDiv = true;
 
         console.error = function errorWithCopy() {
             error.apply(null, arguments);
@@ -144,12 +139,12 @@ var DCSS = function (domElement) {
             args.unshift('ERROR:');
             printToDiv.apply(null, args);
         };
-        console.warn = function logWarning() {
-            warn.apply(null, arguments);
-            var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift('WARNING:');
-            printToDiv.apply(null, args);
-        };
+        //        console.warn = function logWarning() {
+        //            warn.apply(null, arguments);
+        //            var args = Array.prototype.slice.call(arguments, 0);
+        //            args.unshift('WARNING:');
+        //            printToDiv.apply(null, args);
+        //        };
 
         function printTable(objArr, keys) {
             var numCols = keys.length;
@@ -184,7 +179,6 @@ var DCSS = function (domElement) {
             div.appendChild($table);
 
         }
-
         console.table = function logTable() {
             if (typeof table === 'function') {
                 table.apply(null, arguments);
@@ -196,6 +190,7 @@ var DCSS = function (domElement) {
             }
             printTable(objArr, keys);
         };
+
         window.addEventListener('error', err => {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
