@@ -118,12 +118,12 @@ var DCSS = function (domElement) {
             table = console.table ? console.table.bind(console) : null;
 
         var logTo = (function createLogDiv() {
-            var legend = document.createElement('div');
+            let legend = document.createElement('div');
             legend.id = "legend";
-            document.getElementById('viewer').appendChild(legend);
-            var div = document.createElement('div');
+            scope.view.appendChild(legend);
+            let div = document.createElement('div');
             div.id = 'console-log-text';
-            document.getElementById('viewer').appendChild(div);
+            document.getElementById('dcssView').appendChild(div);
             return div;
         }());
 
