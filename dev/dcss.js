@@ -19,8 +19,8 @@ var DCSS = function (domElement) {
     }
     this.initCss = () => {
         'use strict'
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
-        this.css.head.cssText = 'position: fixed; width: 360px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white';
     }
     this.initHTML = () => {
         'use strict'
@@ -81,16 +81,17 @@ var DCSS = function (domElement) {
             if (prevMessage == message) {
 
             } else {
+                let dcss__console = document.getElementById('dcssView__console');
                 message.toString();
                 let log = document.createElement('div'),
                     logMessage = document.createTextNode(message);
-                log.className = 'log';
-                log.classList.add('__viewLog__');
                 log.style.borderBottom = '1px solid #efefef';
                 log.append(logMessage);
-                document.getElementById('dcssView__console').append(log);
+                dcss__console.append(log);
+                dcss__console.firstChild.style.marginTop = '50px';
                 this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
                 prevMessage = message;
+                
             }
         }
         console.warn = console.error = console.info = console.info = console.log;
@@ -123,12 +124,12 @@ var DCSS = function (domElement) {
             warn = console.warn.bind(console),
             table = console.table ? console.table.bind(console) : null;
 
-        var logTo = (function createLogDiv() {
-            let div = document.createElement('div');
-            div.id = 'console-log-text';
-            scope.view.appendChild(div);
-            return div;
-        }());
+//        var logTo = (function createLogDiv() {
+//            let div = document.createElement('div');
+//            div.id = 'console-log-text';
+//            scope.view.appendChild(div);
+//            return div;
+//        }());
 
         function printToDiv() {
             let msg = Array.prototype.slice.call(arguments, 0)
