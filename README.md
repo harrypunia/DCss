@@ -19,5 +19,5 @@ var dcss = new DCSS();
 # Documentation
 
 ```Javascript
-  var dcss = new DCSS(domElement) : //Add name of the id as a string to limit dcss to a specific dom element.
+  var dcss = new DCSS('id'); //Add name of the id as a string to limit dcss to a specific dom element.
 ```
