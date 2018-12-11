@@ -1,6 +1,6 @@
 //author = @harryPunia
 var DCSS = function (domElement) {
-    domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
+    domElement == undefined ? this.domElement = window : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 20;
     this.offsetY = 20;
     this.snapStatus = false;
@@ -8,18 +8,52 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
+    this.console;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
-    let scope = this;
+    this.theme = {
+        main: '#f86666',
+        secondary: '#555',
+        highlight: '#f86666',
+        text: '#151515',
+        border: 'rgba(186, 186, 186, 0.2)'
+    }
+    this.themeList = {
+        red: {
+            main: '#f86666',
+            secondary: '#555',
+            highlight: '#f86666',
+            text: '#151515',
+            border: 'rgba(186, 186, 186, 0.2)'
+        },
+        dark: {
+            main: 'rgba(0, 0, 0, 0.9)',
+            secondary: 'rgb(36, 36, 36)',
+            highlight: '#7779b2',
+            text: '#efefef',
+            border: 'rgba(239, 239, 239, 0.2)'
+        }
+    };
+    let scope = this,
+        logRepeat = 1;
     var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
         this.initHTML();
         this.initCss();
         this.initConsole();
     }
-    this.initCss = () => {
+    this.setTheme = theme => {
+        theme == 'dark' ? this.theme = this.themeList.dark : theme == 'red' ? this.theme = themeList.red : this.theme = this.themeList.red;
+
+        this.css.head.borderBottom = '5px solid ' + this.theme.highlight;
+        this.css.head.background = this.theme.secondary;
+        this.css.view.background = this.theme.main;
+    }
+    this.initCss = (x, y) => {
         'use strict'
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white;';
+        this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
     this.initHTML = () => {
         'use strict'
@@ -28,8 +62,15 @@ var DCSS = function (domElement) {
         document.body.appendChild(this.view);
         this.view.innerHTML = this.html;
         this.css.view = this.view.style;
+        this.head = document.createElement('div');
+        this.head.id = 'dcssHead';
+        this.head.innerHTML = '<p>Console</p>'
+        this.view.insertBefore(this.head, this.view.firstChild);
+        this.css.head = this.head.style;
+        this.console = document.getElementById('dcssView__console');
+        this.css.dcssConsole = this.console.style;
     }
-    this.followView = e => {
+    this.display = e => {
         'use strict'
         this.css.view.display = 'block';
         let x = e.clientX,
@@ -73,16 +114,23 @@ var DCSS = function (domElement) {
         console.log = message => {
             console.olog(message);
             if (prevMessage == message) {
-
+                let prevLog = this.console.lastChild,
+                    times = prevLog.getElementsByTagName('dcss__console-repeat')[0];
+                times.innerHTML = logRepeat;
+                times.style.cssText = 'float: right; background: ' + this.theme.highlight + '; color: white; font-size: 15px; min-width: 40px; text-align: center';
+                logRepeat < 1000 ? logRepeat++ : logRepeat = 1000;
             } else {
+                logRepeat = 1;
                 message.toString();
-                let log = document.createElement('div');
-                let logMessage = document.createTextNode(message);
-                log.classList.add('__viewLog__');
-                log.style.borderBottom = '1px solid #efefef';
+                let log = document.createElement('div'),
+                    logMessage = document.createTextNode(message),
+                    times = document.createElement('dcss__console-repeat');
+                log.style.cssText = 'border-bottom: 1px solid ' + this.theme.border + '; color: ' + this.theme.text;
                 log.append(logMessage);
-                document.getElementById('dcssView__console').append(log);
-                this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
+                log.appendChild(times);
+                this.console.append(log);
+                //dcss__console.firstChild.style.marginTop = '75px';
+                this.console.scrollTop = this.console.scrollHeight - this.console.clientHeight;
                 prevMessage = message;
             }
         }
@@ -116,12 +164,12 @@ var DCSS = function (domElement) {
             warn = console.warn.bind(console),
             table = console.table ? console.table.bind(console) : null;
 
-        var logTo = (function createLogDiv() {
-            let div = document.createElement('div');
-            div.id = 'console-log-text';
-            scope.view.appendChild(div);
-            return div;
-        }());
+        //        var logTo = (function createLogDiv() {
+        //            let div = document.createElement('div');
+        //            div.id = 'console-log-text';
+        //            scope.view.appendChild(div);
+        //            return div;
+        //        }());
 
         function printToDiv() {
             let msg = Array.prototype.slice.call(arguments, 0)
@@ -131,7 +179,6 @@ var DCSS = function (domElement) {
             item.textContent = msg;
             logTo.appendChild(item);
         }
-
         //        console.error = function errorWithCopy() {
         //            error.apply(null, arguments);
         //            var args = Array.prototype.slice.call(arguments, 0);
@@ -197,8 +244,10 @@ var DCSS = function (domElement) {
     this.domElement.addEventListener('mouseout', () => {
         !this.snapStatus ? this.css.view.display = 'none' : 0
     }, false);
-    this.domElement.addEventListener('mousemove', scope.followView, false);
+    this.domElement.addEventListener('load', scope.display, false);
+    this.domElement.addEventListener('mousemove', scope.display, false);
     window.onkeydown = e => {
+        console.log('test');
         let key = e.keyCode ? e.which : e.which;
         if (key == 77 && this.snapStatus == false) {
             this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
