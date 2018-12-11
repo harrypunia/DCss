@@ -93,8 +93,10 @@ var DCSS = function (domElement) {
     }
     this.snap = (x, y) => {
         'use strict'
-        this.css.view.top = x;
-        this.css.view.left = y;
+        y == undefined ? y = x : 0;
+        this.snapStatus = true;
+        this.css.view.left = x + 'vw';
+        this.css.view.top = y + 'vh';
     }
     this.minimize = () => {
         'use strict'
