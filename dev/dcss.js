@@ -5,7 +5,7 @@ var DCSS = function (domElement) {
     this.offsetY = 20;
     this.snapViewer = false;
     this.hoverViewer = false;
-    this.snapping = false;
+    this.snapStatus = false;
     this.minimizeViewer = false;
     this.width = 400;
     this.height = 400;
@@ -37,7 +37,7 @@ var DCSS = function (domElement) {
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
-        if (this.snapViewer == false || this.minimizeViewer) {
+        if (this.snapStatus == false || this.minimizeViewer) {
             let switchX = e.clientX > (window.innerWidth / 2),
                 switchY = e.clientY > (window.innerHeight / 2),
                 switchMobile = window.innerWidth < (this.width + this.offsetX) * 2;
@@ -58,7 +58,7 @@ var DCSS = function (domElement) {
                     switchX ? this.css.view.transformOrigin = '100% 0' : this.css.view.transformOrigin = '0 0';
                 }
             }
-        } else if (this.snapViewer && !this.minimizeViewer) {
+        } else if (this.snapStatus && !this.minimizeViewer) {
             console.log('snapping');
         }
     }
@@ -91,12 +91,9 @@ var DCSS = function (domElement) {
         }
         console.warn = console.error = console.info = console.info = console.log;
     }
-    this.snapView = e => {
+    this.snap = e => {
         'use strict'
-        if (this.snapping && this.snapViewer) {
-            this.css.view.left = e.clientX - (this.width / 2) + 'px';
-            this.css.view.top = e.clientY - 10 + 'px';
-        }
+
     }
     this.minimize = () => {
         'use strict'
@@ -135,19 +132,18 @@ var DCSS = function (domElement) {
             logTo.appendChild(item);
         }
 
-        console.error = function errorWithCopy() {
-            error.apply(null, arguments);
-            var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift('ERROR:');
-            printToDiv.apply(null, args);
-        };
+        //        console.error = function errorWithCopy() {
+        //            error.apply(null, arguments);
+        //            var args = Array.prototype.slice.call(arguments, 0);
+        //            args.unshift('ERROR:');
+        //            printToDiv.apply(null, args);
+        //        };
         //        console.warn = function logWarning() {
         //            warn.apply(null, arguments);
         //            var args = Array.prototype.slice.call(arguments, 0);
         //            args.unshift('WARNING:');
         //            printToDiv.apply(null, args);
         //        };
-
         function printTable(objArr, keys) {
             var numCols = keys.length;
             var len = objArr.length;
@@ -192,37 +188,24 @@ var DCSS = function (domElement) {
             }
             printTable(objArr, keys);
         };
-
         window.addEventListener('error', err => {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
     }());
-
     //-----------------------------------------------------------------
     //-----------------------------------------------------------------
-    //-----------------------------------------------------------------
-    this.domElement.addEventListener('mouseout', () => {
-        !this.snapViewer ? this.css.view.display = 'none' : 0
-        this.hoverViewer = false;
-    }, false);
-    this.domElement.addEventListener('mousemove', scope.followView, false);
-    window.addEventListener('mousemove', scope.snapView, false);
-    window.onmousedown = () => {
-        this.snapping = true;
-    }
-    window.onmouseup = () => {
-        this.snapping = false;
-    }
-    window.onkeydown = e => {
-        let key = e.keyCode ? e.which : e.which;
-        if (this.snapViewer && key == 83) {
-            (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
-        } else if (this.hoverViewer) {
-            key == 83 ? this.snapViewer = true : 0;
-        }
-        if (key == 77) {
-            this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
-            this.minimize();
+    if (!this.snapStatus) {
+        this.domElement.addEventListener('mouseout', () => {
+            !this.snapViewer ? this.css.view.display = 'none' : 0
+            this.hoverViewer = false;
+        }, false);
+        this.domElement.addEventListener('mousemove', scope.followView, false);
+        window.onkeydown = e => {
+            let key = e.keyCode ? e.which : e.which;
+            if (key == 77 && this.snapStatus == false) {
+                this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
+                this.minimize();
+            }
         }
     }
 }
