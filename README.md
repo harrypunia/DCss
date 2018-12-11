@@ -1,10 +1,10 @@
 # DCSS
 A JS Library that makes debugging css easier
 
-##### Functionality
+### Functionality
 The library brings your console into your webpage. It creates a temporary html wrapper that follows your cursor, so you can preview all your logs as you navigate across the webpage.
 
-##### Usage
+### Usage
 Download the minified version of the library from the dist folder named **dcss.min.js** and include it in your HTML file.
 
 ```html
