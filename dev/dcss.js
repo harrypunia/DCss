@@ -91,9 +91,10 @@ var DCSS = function (domElement) {
         }
         console.warn = console.error = console.info = console.info = console.log;
     }
-    this.snap = e => {
+    this.snap = (x, y) => {
         'use strict'
-
+        this.css.view.top = x;
+        this.css.view.left = y;
     }
     this.minimize = () => {
         'use strict'
