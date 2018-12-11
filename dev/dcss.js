@@ -1,6 +1,6 @@
 //author = @harryPunia
 var DCSS = function (domElement) {
-    domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
+    domElement == undefined ? this.domElement = window : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 20;
     this.offsetY = 20;
     this.snapStatus = false;
@@ -8,6 +8,7 @@ var DCSS = function (domElement) {
     this.width = 400;
     this.height = 400;
     this.view;
+    this.console;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
     let scope = this;
@@ -20,7 +21,7 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
-        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white';
+        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white;';
         this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
     this.initHTML = () => {
@@ -35,7 +36,8 @@ var DCSS = function (domElement) {
         this.head.innerHTML = '<p>Console</p>'
         this.view.insertBefore(this.head, this.view.firstChild);
         this.css.head = this.head.style;
-        this.css.dcssConsole = document.getElementById('dcssView__console').style;
+        this.console = document.getElementById('dcssView__console');
+        this.css.dcssConsole = this.console.style;
     }
     this.followView = e => {
         'use strict'
@@ -83,7 +85,6 @@ var DCSS = function (domElement) {
             if (prevMessage == message) {
 
             } else {
-                let dcss__console = document.getElementById('dcssView__console');
                 message.toString();
                 let log = document.createElement('div'),
                     logMessage = document.createTextNode(message);
@@ -94,7 +95,6 @@ var DCSS = function (domElement) {
                 //dcss__console.firstChild.style.marginTop = '75px';
                 dcss__console.scrollTop = dcss__console.scrollHeight - dcss__console.clientHeight;
                 prevMessage = message;
-                
             }
         }
         console.warn = console.error = console.info = console.info = console.log;
@@ -127,12 +127,12 @@ var DCSS = function (domElement) {
             warn = console.warn.bind(console),
             table = console.table ? console.table.bind(console) : null;
 
-//        var logTo = (function createLogDiv() {
-//            let div = document.createElement('div');
-//            div.id = 'console-log-text';
-//            scope.view.appendChild(div);
-//            return div;
-//        }());
+        //        var logTo = (function createLogDiv() {
+        //            let div = document.createElement('div');
+        //            div.id = 'console-log-text';
+        //            scope.view.appendChild(div);
+        //            return div;
+        //        }());
 
         function printToDiv() {
             let msg = Array.prototype.slice.call(arguments, 0)
@@ -208,7 +208,7 @@ var DCSS = function (domElement) {
         !this.snapStatus ? this.css.view.display = 'none' : 0
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
-    window.onkeydown = e => {        
+    window.onkeydown = e => {
         console.log('test');
         let key = e.keyCode ? e.which : e.which;
         if (key == 77 && this.snapStatus == false) {
