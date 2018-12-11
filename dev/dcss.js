@@ -3,26 +3,26 @@ var DCSS = function (domElement) {
     domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 20;
     this.offsetY = 20;
-    this.snapViewer = false;
-    this.hoverViewer = false;
-    this.snapping = false;
+    this.snapStatus = false;
     this.minimizeViewer = false;
     this.width = 400;
     this.height = 400;
     this.view;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
-    this.dConsole;
     let scope = this;
+    var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
         this.initHTML();
         this.initCss();
         this.initConsole();
     }
     this.initCss = () => {
+        'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
     }
     this.initHTML = () => {
+        'use strict'
         this.view = document.createElement('div');
         this.view.id = 'dcssView';
         document.body.appendChild(this.view);
@@ -30,11 +30,11 @@ var DCSS = function (domElement) {
         this.css.view = this.view.style;
     }
     this.followView = e => {
-        this.hoverViewer = true;
+        'use strict'
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
-        if (this.snapViewer == false || this.minimizeViewer) {
+        if (this.snapStatus == false || this.minimizeViewer) {
             let switchX = e.clientX > (window.innerWidth / 2),
                 switchY = e.clientY > (window.innerHeight / 2),
                 switchMobile = window.innerWidth < (this.width + this.offsetX) * 2;
@@ -55,11 +55,12 @@ var DCSS = function (domElement) {
                     switchX ? this.css.view.transformOrigin = '100% 0' : this.css.view.transformOrigin = '0 0';
                 }
             }
-        } else if (this.snapViewer && !this.minimizeViewer) {
+        } else if (this.snapStatus && !this.minimizeViewer) {
             console.log('snapping');
         }
     }
     this.initConsole = () => {
+        'use strict'
         let prevMessage;
         if (typeof console != "undefined") {
             if (typeof console.log != 'undefined') {
@@ -71,26 +72,31 @@ var DCSS = function (domElement) {
 
         console.log = message => {
             console.olog(message);
-            if (prevMessage == message) {} else {
+            if (prevMessage == message) {
+
+            } else {
                 message.toString();
-                this.dConsole = document.createElement('pre');
-                let dConsoleLog = document.createTextNode(message);
-                this.dConsole.classList.add('__viewLog__');
-                this.dConsole.append(dConsoleLog);
-                this.view.append(this.dConsole);
+                let log = document.createElement('div');
+                let logMessage = document.createTextNode(message);
+                log.classList.add('__viewLog__');
+                log.style.borderBottom = '1px solid #efefef';
+                log.append(logMessage);
+                document.getElementById('dcssView__console').append(log);
                 this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
                 prevMessage = message;
             }
         }
         console.warn = console.error = console.info = console.info = console.log;
     }
-    this.snapView = e => {
-        if (this.snapping && this.snapViewer) {
-            this.css.view.left = e.clientX - (this.width / 2) + 'px';
-            this.css.view.top = e.clientY - 10 + 'px';
-        }
+    this.snap = (x, y) => {
+        'use strict'
+        y == undefined ? y = x : 0;
+        this.snapStatus = true;
+        this.css.view.left = x + 'vw';
+        this.css.view.top = y + 'vh';
     }
     this.minimize = () => {
+        'use strict'
         if (this.minimizeViewer == true) {
             this.css.view.transform = 'scale3d(.05, .05, 1)';
             this.css.view.background = 'red';
@@ -104,13 +110,6 @@ var DCSS = function (domElement) {
     this.init();
     (function mapConsole() {
         'use strict';
-        if (console.log.toDiv) {
-            return;
-        }
-
-        function toString(x) {
-            return typeof x === 'string' ? x : JSON.stringify(x);
-        }
 
         let log = console.log.bind(console),
             error = console.error.bind(console),
@@ -118,39 +117,33 @@ var DCSS = function (domElement) {
             table = console.table ? console.table.bind(console) : null;
 
         var logTo = (function createLogDiv() {
-            let legend = document.createElement('div');
-            legend.id = "legend";
-            scope.view.appendChild(legend);
             let div = document.createElement('div');
             div.id = 'console-log-text';
-            document.getElementById('dcssView').appendChild(div);
+            scope.view.appendChild(div);
             return div;
         }());
 
         function printToDiv() {
-            var msg = Array.prototype.slice.call(arguments, 0)
+            let msg = Array.prototype.slice.call(arguments, 0)
                 .map(toString)
-                .join(' ');
-            var item = document.createElement('div');
+                .join(' '),
+                item = document.createElement('div');
             item.textContent = msg;
             logTo.appendChild(item);
         }
 
-        console.log.toDiv = true;
-
-        console.error = function errorWithCopy() {
-            error.apply(null, arguments);
-            var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift('ERROR:');
-            printToDiv.apply(null, args);
-        };
-        console.warn = function logWarning() {
-            warn.apply(null, arguments);
-            var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift('WARNING:');
-            printToDiv.apply(null, args);
-        };
-
+        //        console.error = function errorWithCopy() {
+        //            error.apply(null, arguments);
+        //            var args = Array.prototype.slice.call(arguments, 0);
+        //            args.unshift('ERROR:');
+        //            printToDiv.apply(null, args);
+        //        };
+        //        console.warn = function logWarning() {
+        //            warn.apply(null, arguments);
+        //            var args = Array.prototype.slice.call(arguments, 0);
+        //            args.unshift('WARNING:');
+        //            printToDiv.apply(null, args);
+        //        };
         function printTable(objArr, keys) {
             var numCols = keys.length;
             var len = objArr.length;
@@ -184,7 +177,6 @@ var DCSS = function (domElement) {
             div.appendChild($table);
 
         }
-
         console.table = function logTable() {
             if (typeof table === 'function') {
                 table.apply(null, arguments);
@@ -200,26 +192,15 @@ var DCSS = function (domElement) {
             printToDiv('EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
         });
     }());
+    //-----------------------------------------------------------------
+    //-----------------------------------------------------------------
     this.domElement.addEventListener('mouseout', () => {
-        !this.snapViewer ? this.css.view.display = 'none' : 0
-        this.hoverViewer = false;
+        !this.snapStatus ? this.css.view.display = 'none' : 0
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
-    window.addEventListener('mousemove', scope.snapView, false);
-    window.onmousedown = () => {
-        this.snapping = true;
-    }
-    window.onmouseup = () => {
-        this.snapping = false;
-    }
     window.onkeydown = e => {
         let key = e.keyCode ? e.which : e.which;
-        if (this.snapViewer && key == 83) {
-            (key == 83 && !this.snapViewer) ? this.snapViewer = true: (key == 83 && this.snapViewer) ? this.snapViewer = false : 0;
-        } else if (this.hoverViewer) {
-            key == 83 ? this.snapViewer = true : 0;
-        }
-        if (key == 77) {
+        if (key == 77 && this.snapStatus == false) {
             this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
             this.minimize();
         }
