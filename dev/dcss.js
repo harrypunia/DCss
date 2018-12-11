@@ -3,8 +3,6 @@ var DCSS = function (domElement) {
     domElement == undefined ? (this.domElement = document, console.warn('Missing target, DCss will use the entire document as a fallback. Pass document/id as a parameter.')) : domElement == document ? this.domElement = document : this.domElement = document.getElementById(domElement);
     this.offsetX = 20;
     this.offsetY = 20;
-    this.snapViewer = false;
-    this.hoverViewer = false;
     this.snapStatus = false;
     this.minimizeViewer = false;
     this.width = 400;
@@ -33,7 +31,6 @@ var DCSS = function (domElement) {
     }
     this.followView = e => {
         'use strict'
-        this.hoverViewer = true;
         this.css.view.display = 'block';
         let x = e.clientX,
             y = e.clientY;
@@ -197,18 +194,15 @@ var DCSS = function (domElement) {
     }());
     //-----------------------------------------------------------------
     //-----------------------------------------------------------------
-    if (!this.snapStatus) {
-        this.domElement.addEventListener('mouseout', () => {
-            !this.snapViewer ? this.css.view.display = 'none' : 0
-            this.hoverViewer = false;
-        }, false);
-        this.domElement.addEventListener('mousemove', scope.followView, false);
-        window.onkeydown = e => {
-            let key = e.keyCode ? e.which : e.which;
-            if (key == 77 && this.snapStatus == false) {
-                this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
-                this.minimize();
-            }
+    this.domElement.addEventListener('mouseout', () => {
+        !this.snapStatus ? this.css.view.display = 'none' : 0
+    }, false);
+    this.domElement.addEventListener('mousemove', scope.followView, false);
+    window.onkeydown = e => {
+        let key = e.keyCode ? e.which : e.which;
+        if (key == 77 && this.snapStatus == false) {
+            this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
+            this.minimize();
         }
     }
 }
