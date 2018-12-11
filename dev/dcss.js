@@ -11,6 +11,14 @@ var DCSS = function (domElement) {
     this.console;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
+    this.theme = {
+        main: '#f86666',
+    }
+    this.themeList = {
+        red : {
+            main: '#f86666',
+        }
+    };
     let scope = this,
         logRepeat = 1;
     var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
@@ -22,7 +30,7 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
-        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white;';
+        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid ' + this.theme.main + '; color: white;';
         this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
     this.initHTML = () => {
