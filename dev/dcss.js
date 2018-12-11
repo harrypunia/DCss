@@ -87,8 +87,8 @@ var DCSS = function (domElement) {
                 let prevLog = this.console.lastChild,
                     times = prevLog.getElementsByTagName('dcss__console-repeat')[0];
                 times.innerHTML = logRepeat;
-                times.style.cssText = 'background: #f24747; color: white';
-                logRepeat++;
+                times.style.cssText = 'float: right ;background: #f24747; color: white; font-size: 15px; min-width: 40px; text-align: center';
+                logRepeat < 1000 ? logRepeat++ : logRepeat = 1000;
             } else {
                 logRepeat = 1;
                 message.toString();
