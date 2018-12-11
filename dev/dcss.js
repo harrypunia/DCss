@@ -12,7 +12,7 @@ var DCSS = function (domElement) {
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
     let scope = this,
-        logRepeat = 0;
+        logRepeat = 1;
     var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
         this.initHTML();
@@ -85,17 +85,19 @@ var DCSS = function (domElement) {
             console.olog(message);
             if (prevMessage == message) {
                 let prevLog = this.console.lastChild,
-                    times = document.createTextNode(logRepeat);
-                prevLog.append(times);
+                    times = prevLog.getElementsByTagName('dcss__console-repeat')[0];
+                times.innerHTML = logRepeat;
+                times.style.cssText = 'background: #f24747; color: white';
                 logRepeat++;
             } else {
-                logRepeat = 0;
+                logRepeat = 1;
                 message.toString();
                 let log = document.createElement('div'),
-                    logMessage = document.createTextNode(message);
-                //log.style.borderBottom = '1px solid #efefef';
+                    logMessage = document.createTextNode(message),
+                    times = document.createElement('dcss__console-repeat');
                 log.style.cssText = 'border-bottom: 1px solid #efefef';
                 log.append(logMessage);
+                log.appendChild(times);
                 this.console.append(log);
                 //dcss__console.firstChild.style.marginTop = '75px';
                 this.console.scrollTop = this.console.scrollHeight - this.console.clientHeight;
