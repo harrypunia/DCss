@@ -13,13 +13,25 @@ var DCSS = function (domElement) {
     this.css = {};
     this.theme = {
         main: '#f86666',
+        secondary: '#555',
+        highlight: '#f86666',
+        text: '#151515',
+        border: 'rgba(186, 186, 186, 0.2)'
     }
     this.themeList = {
-        red : {
-            main: '#f86666'
+        red: {
+            main: '#f86666',
+            secondary: '#555',
+            highlight: '#f86666',
+            text: '#151515',
+            border: 'rgba(186, 186, 186, 0.2)'
         },
-        black: {
-            main: '#4fbfd9'
+        dark: {
+            main: 'rgba(0, 0, 0, 0.9)',
+            secondary: 'rgb(36, 36, 36)',
+            highlight: '#7779b2',
+            text: '#efefef',
+            border: 'rgba(239, 239, 239, 0.2)'
         }
     };
     let scope = this,
@@ -31,13 +43,16 @@ var DCSS = function (domElement) {
         this.initConsole();
     }
     this.setTheme = theme => {
-        theme == 'black' ? this.theme = this.themeList.black : this.theme = this.themeList.red;
-        this.initCss();
+        theme == 'dark' ? this.theme = this.themeList.dark : theme == 'red' ? this.theme = themeList.red : this.theme = this.themeList.red;
+
+        this.css.head.borderBottom = '5px solid ' + this.theme.highlight;
+        this.css.head.background = this.theme.secondary;
+        this.css.view.background = this.theme.main;
     }
-    this.initCss = () => {
+    this.initCss = (x, y) => {
         'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; transition: transform .2s, background .2s, border-radius .2s';
-        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid ' + this.theme.main + '; color: white;';
+        this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white;';
         this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
     this.initHTML = () => {
@@ -55,7 +70,7 @@ var DCSS = function (domElement) {
         this.console = document.getElementById('dcssView__console');
         this.css.dcssConsole = this.console.style;
     }
-    this.followView = e => {
+    this.display = e => {
         'use strict'
         this.css.view.display = 'block';
         let x = e.clientX,
@@ -102,7 +117,7 @@ var DCSS = function (domElement) {
                 let prevLog = this.console.lastChild,
                     times = prevLog.getElementsByTagName('dcss__console-repeat')[0];
                 times.innerHTML = logRepeat;
-                times.style.cssText = 'float: right ;background: #f24747; color: white; font-size: 15px; min-width: 40px; text-align: center';
+                times.style.cssText = 'float: right; background: ' + this.theme.highlight + '; color: white; font-size: 15px; min-width: 40px; text-align: center';
                 logRepeat < 1000 ? logRepeat++ : logRepeat = 1000;
             } else {
                 logRepeat = 1;
@@ -110,7 +125,7 @@ var DCSS = function (domElement) {
                 let log = document.createElement('div'),
                     logMessage = document.createTextNode(message),
                     times = document.createElement('dcss__console-repeat');
-                log.style.cssText = 'border-bottom: 1px solid #efefef';
+                log.style.cssText = 'border-bottom: 1px solid ' + this.theme.border + '; color: ' + this.theme.text;
                 log.append(logMessage);
                 log.appendChild(times);
                 this.console.append(log);
@@ -229,7 +244,8 @@ var DCSS = function (domElement) {
     this.domElement.addEventListener('mouseout', () => {
         !this.snapStatus ? this.css.view.display = 'none' : 0
     }, false);
-    this.domElement.addEventListener('mousemove', scope.followView, false);
+    this.domElement.addEventListener('load', scope.display, false);
+    this.domElement.addEventListener('mousemove', scope.display, false);
     window.onkeydown = e => {
         console.log('test');
         let key = e.keyCode ? e.which : e.which;
