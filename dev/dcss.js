@@ -86,7 +86,10 @@ var DCSS = function (domElement) {
             if (prevMessage == message) {
                 let prevLog = this.console.lastChild,
                     times = document.createTextNode(logRepeat);
+                prevLog.append(times);
+                logRepeat++;
             } else {
+                logRepeat = 0;
                 message.toString();
                 let log = document.createElement('div'),
                     logMessage = document.createTextNode(message);
