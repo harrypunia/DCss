@@ -16,7 +16,10 @@ var DCSS = function (domElement) {
     }
     this.themeList = {
         red : {
-            main: '#f86666',
+            main: '#f86666'
+        },
+        black: {
+            main: '#4fbfd9'
         }
     };
     let scope = this,
@@ -27,9 +30,13 @@ var DCSS = function (domElement) {
         this.initCss();
         this.initConsole();
     }
+    this.setTheme = theme => {
+        theme == 'black' ? this.theme = this.themeList.black : this.theme = this.themeList.red;
+        this.initCss();
+    }
     this.initCss = () => {
         'use strict'
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; transition: transform .2s, background .2s, border-radius .2s';
         this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid ' + this.theme.main + '; color: white;';
         this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
