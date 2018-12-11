@@ -20,6 +20,7 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.head.cssText = 'background: red; text-align: center; height: 20px;';
     }
     this.initHTML = () => {
         'use strict'
@@ -28,6 +29,11 @@ var DCSS = function (domElement) {
         document.body.appendChild(this.view);
         this.view.innerHTML = this.html;
         this.css.view = this.view.style;
+        this.head = document.createElement('div');
+        this.head.id = 'dcssHead';
+        this.head.innerHTML = '<p>Console</p>'
+        this.view.insertBefore(this.head, this.view.firstChild);
+        this.css.head = this.head.style;
     }
     this.followView = e => {
         'use strict'
