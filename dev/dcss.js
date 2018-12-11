@@ -20,7 +20,7 @@ var DCSS = function (domElement) {
     this.initCss = () => {
         'use strict'
         this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; padding: 20px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
-        this.css.head.cssText = 'background: red; text-align: center; height: 20px;';
+        this.css.head.cssText = 'position: fixed; width: 360px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white';
     }
     this.initHTML = () => {
         'use strict'
@@ -82,8 +82,9 @@ var DCSS = function (domElement) {
 
             } else {
                 message.toString();
-                let log = document.createElement('div');
-                let logMessage = document.createTextNode(message);
+                let log = document.createElement('div'),
+                    logMessage = document.createTextNode(message);
+                log.className = 'log';
                 log.classList.add('__viewLog__');
                 log.style.borderBottom = '1px solid #efefef';
                 log.append(logMessage);
@@ -205,6 +206,7 @@ var DCSS = function (domElement) {
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
     window.onkeydown = e => {
+        console.log('test');
         let key = e.keyCode ? e.which : e.which;
         if (key == 77 && this.snapStatus == false) {
             this.minimizeViewer == false ? this.minimizeViewer = true : this.minimizeViewer = false;
