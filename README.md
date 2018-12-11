@@ -12,5 +12,5 @@ Download the minified version of the library from the dist folder named **dcss.m
 ```
 Now to initiate dcss, create an instance of the class dcss as follows
 ```
-let dcss = new DCSS();
+var dcss = new DCSS();
 ```
