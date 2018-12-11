@@ -11,7 +11,8 @@ var DCSS = function (domElement) {
     this.console;
     this.html = '<div id="dcssView__console"></div>';
     this.css = {};
-    let scope = this;
+    let scope = this,
+        logRepeat = 0;
     var toString = x => typeof x === 'string' ? x : JSON.stringify(x);
     this.init = () => {
         this.initHTML();
@@ -83,7 +84,8 @@ var DCSS = function (domElement) {
         console.log = message => {
             console.olog(message);
             if (prevMessage == message) {
-
+                let prevLog = this.console.lastChild,
+                    times = document.createTextNode(logRepeat);
             } else {
                 message.toString();
                 let log = document.createElement('div'),
@@ -91,9 +93,9 @@ var DCSS = function (domElement) {
                 //log.style.borderBottom = '1px solid #efefef';
                 log.style.cssText = 'border-bottom: 1px solid #efefef';
                 log.append(logMessage);
-                dcss__console.append(log);
+                this.console.append(log);
                 //dcss__console.firstChild.style.marginTop = '75px';
-                dcss__console.scrollTop = dcss__console.scrollHeight - dcss__console.clientHeight;
+                this.console.scrollTop = this.console.scrollHeight - this.console.clientHeight;
                 prevMessage = message;
             }
         }
