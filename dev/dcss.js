@@ -19,8 +19,9 @@ var DCSS = function (domElement) {
     }
     this.initCss = () => {
         'use strict'
-        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: scroll; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
+        this.css.view.cssText = 'display: none; width: ' + this.width + 'px; height: ' + this.height + 'px; background: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 50px; position: fixed; z-index: 99999999; overflow: hidden; left: 0x; top: 0px; transition: transform .2s, background .2s, border-radius .2s';
         this.css.head.cssText = 'position: fixed; width:' + this.width + 'px; text-align: center; height: 40px; line-height: 40px; background: #333; border-bottom: 5px solid #f86666; color: white';
+        this.css.dcssConsole.cssText = 'margin-left: 25px; margin-top: 50px; background: red; height: ' + (this.height - 75) + 'px; width: 350px; overflow: scroll'
     }
     this.initHTML = () => {
         'use strict'
@@ -34,6 +35,7 @@ var DCSS = function (domElement) {
         this.head.innerHTML = '<p>Console</p>'
         this.view.insertBefore(this.head, this.view.firstChild);
         this.css.head = this.head.style;
+        this.css.dcssConsole = document.getElementById('dcssView__console').style;
     }
     this.followView = e => {
         'use strict'
@@ -85,11 +87,12 @@ var DCSS = function (domElement) {
                 message.toString();
                 let log = document.createElement('div'),
                     logMessage = document.createTextNode(message);
-                log.style.borderBottom = '1px solid #efefef';
+                //log.style.borderBottom = '1px solid #efefef';
+                log.style.cssText = 'border-bottom: 1px solid #efefef';
                 log.append(logMessage);
                 dcss__console.append(log);
-                dcss__console.firstChild.style.marginTop = '50px';
-                this.view.scrollTop = this.view.scrollHeight - this.view.clientHeight;
+                //dcss__console.firstChild.style.marginTop = '75px';
+                dcss__console.scrollTop = dcss__console.scrollHeight - dcss__console.clientHeight;
                 prevMessage = message;
                 
             }
@@ -139,7 +142,6 @@ var DCSS = function (domElement) {
             item.textContent = msg;
             logTo.appendChild(item);
         }
-
         //        console.error = function errorWithCopy() {
         //            error.apply(null, arguments);
         //            var args = Array.prototype.slice.call(arguments, 0);
@@ -206,7 +208,7 @@ var DCSS = function (domElement) {
         !this.snapStatus ? this.css.view.display = 'none' : 0
     }, false);
     this.domElement.addEventListener('mousemove', scope.followView, false);
-    window.onkeydown = e => {
+    window.onkeydown = e => {        
         console.log('test');
         let key = e.keyCode ? e.which : e.which;
         if (key == 77 && this.snapStatus == false) {
