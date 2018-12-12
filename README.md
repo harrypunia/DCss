@@ -16,7 +16,7 @@ The library brings your console into your webpage. It creates a temporary html w
 var dcss = new DCSS();
 ```
 
-# Documentation
+### Documentation
 
 ```Javascript
   * var dcss = new DCSS('id'); //Add name of the id as a string to limit dcss to a specific dom element.
